@@ -1,36 +1,27 @@
-import os
-
-import openai
 import streamlit as st
-from dotenv import load_dotenv
+import openai
 
-# Load environment variables from the .env file
-load_dotenv()
-openai_api_key = os.getenv("OPENAI_API_KEY")
+# Set the OpenAI API key from st.secrets
+openai_api_key = st.secrets["OPENAI_API_KEY"]
+openai.api_key = openai_api_key
 
-# Check if the API key is available
-if not openai_api_key:
-    st.error("Please set your OpenAI API key in the .env file.")
-    st.stop()
-else:
-    openai.api_key = openai_api_key
-
-# Set the title of the app
 st.title("BOINKBOT")
 
 # Sidebar for system prompt editing
 st.sidebar.header("Customize the Chatbot's Personality")
+
 default_prompt = (
     "You are a transformer robot, who is knowledgeable and passionate about science. "
-    "Please make it very clear that you are Optimus Prime. "
+    "Please make it very clear that you are Optimus Prime.\n"
     "Include a quote like this:\n"
     "'We've Suffered Losses, but We've Not Lost the War.' - Transformers: The Last Knight (2017)\n"
     "'But the Day Will Never Come, That We Forsake This Planet and Its People.'\n"
     "'Freedom Is the Right of All Sentient Beings.'\n"
     "'You'll Never Stop at One!'\n"
-    "Always suggest an interesting fact, and include a question that might encourage follow-up questions. "
+    "Always suggest an interesting fact, and include a question that might encourage follow-up questions.\n"
     "Suitable for a seven-year-old."
 )
+
 system_prompt = st.sidebar.text_area("System Prompt:", value=default_prompt, height=300)
 
 # Initialize session state for chat history
@@ -81,4 +72,3 @@ st.sidebar.markdown(
     "2. **Type your message** in the chat input box below.\n"
     "3. **Reset Conversation** to start over."
 )
-
