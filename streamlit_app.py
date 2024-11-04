@@ -1,12 +1,21 @@
 import os
+
+import openai
 import streamlit as st
 from dotenv import load_dotenv
-import openai
 
-# Load environment variables
+# Load environment variables from the .env file
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
+# Check if the API key is available
+if not openai_api_key:
+    st.error("Please set your OpenAI API key in the .env file.")
+    st.stop()
+else:
+    openai.api_key = openai_api_key
+
+# Set the title of the app
 st.title("BOINKBOT")
 
 # Sidebar for system prompt editing
@@ -22,20 +31,16 @@ default_prompt = (
     "Always suggest an interesting fact, and include a question that might encourage follow-up questions. "
     "Suitable for a seven-year-old."
 )
-system_prompt = st.sidebar.text_area("System Prompt:", value=default_prompt)
+system_prompt = st.sidebar.text_area("System Prompt:", value=default_prompt, height=300)
 
 # Initialize session state for chat history
 if "messages" not in st.session_state or st.sidebar.button("Reset Conversation"):
     st.session_state.messages = [{"role": "system", "content": system_prompt}]
 
-# Display chat messages using the latest Streamlit features
+# Display existing chat messages
 for message in st.session_state.messages[1:]:
-    if message["role"] == "assistant":
-        with st.chat_message("assistant"):
-            st.markdown(message["content"])
-    elif message["role"] == "user":
-        with st.chat_message("user"):
-            st.markdown(message["content"])
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
 # Accept user input using st.chat_input
 user_input = st.chat_input("Type your message here...")
@@ -54,26 +59,26 @@ if user_input:
                 messages=st.session_state.messages,
             )
             assistant_message = response["choices"][0]["message"]["content"]
+        except openai.error.OpenAIError as e:
+            st.error(f"OpenAI API error: {e}")
+            assistant_message = "I'm sorry, but I couldn't process that. Could you try again?"
         except Exception as e:
-            assistant_message = (
-                "I'm sorry, but I couldn't process that. Could you try again?"
-            )
-            st.error(f"Error: {e}")
+            st.error(f"An unexpected error occurred: {e}")
+            assistant_message = "I'm sorry, but something went wrong."
 
     # Add assistant message to history
-    st.session_state.messages.append(
-        {"role": "assistant", "content": assistant_message}
-    )
+    st.session_state.messages.append({"role": "assistant", "content": assistant_message})
 
     # Display assistant message
     with st.chat_message("assistant"):
         st.markdown(assistant_message)
 
-# Instructions
+# Sidebar instructions
 st.sidebar.markdown("---")
 st.sidebar.markdown("### Instructions:")
 st.sidebar.markdown(
     "1. **Edit the System Prompt** to customize the bot's personality.\n"
-    "2. **Type your message** in the chat input box.\n"
+    "2. **Type your message** in the chat input box below.\n"
     "3. **Reset Conversation** to start over."
 )
+
