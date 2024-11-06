@@ -1,9 +1,8 @@
 import streamlit as st
-import openai  # Import the openai module
+import openai  # Correctly import the openai module
 
 # Set the OpenAI API key
-openai_api_key = st.secrets["OPENAI_API_KEY"]
-openai.api_key = openai_api_key  # Set the API key
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 st.title("BOINKBOT")
 
