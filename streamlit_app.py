@@ -50,7 +50,7 @@ if user_input:
     # Get assistant response
     with st.spinner("Thinking..."):
         try:
-            response = client.completions.create(
+            response = client.ChatCompletion.create(
                 model="gpt-4",
                 messages=st.session_state.messages,
             )
