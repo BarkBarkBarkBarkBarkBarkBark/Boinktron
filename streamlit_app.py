@@ -1,4 +1,3 @@
-import openai.error
 import streamlit as st
 import openai  # Import the openai module
 
