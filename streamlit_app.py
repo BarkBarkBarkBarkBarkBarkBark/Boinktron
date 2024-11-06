@@ -45,7 +45,7 @@ if user_input:
     # Get assistant response
     with st.spinner("Thinking..."):
         try:
-            response = openai.Completions.create(
+            response = openai.Completion.create(
                 model="gpt-3.5-turbo",
                 messages=st.session_state.messages,
             )
