@@ -45,12 +45,12 @@ if user_input:
     # Get assistant response
     with st.spinner("Thinking..."):
         try:
-            response = openai.ChatCompletion.create(
+            response = openai.Completions.create(
                 model="gpt-3.5-turbo",
                 messages=st.session_state.messages,
             )
             assistant_message = response["choices"][0]["message"]["content"]
-        except openai.error.OpenAIError as e:
+        except openai.OpenAIError as e:
             st.error(f"OpenAI API error: {e}")
             assistant_message = "I'm sorry, but I couldn't process that. Could you try again?"
         except Exception as e:
