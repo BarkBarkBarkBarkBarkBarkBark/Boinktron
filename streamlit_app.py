@@ -1,3 +1,4 @@
+import openai.error
 import streamlit as st
 import openai  # Import the openai module
 
@@ -53,7 +54,7 @@ if user_input:
                 messages=st.session_state.messages,
             )
             assistant_message = response.choices[0].message.content
-        except openai.error.OpenAIError as e:
+        except openai.OpenAIError as e:
             st.error(f"OpenAI API error: {e}")
             assistant_message = "I'm sorry, but I couldn't process that. Could you try again?"
         except Exception as e:
