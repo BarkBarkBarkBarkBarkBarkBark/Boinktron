@@ -27,6 +27,9 @@ system_prompt = st.sidebar.text_area("System Prompt:", value=default_prompt, hei
 # Initialize session state for chat history
 if "messages" not in st.session_state or st.sidebar.button("Reset Conversation"):
     st.session_state.messages = [{"role": "system", "content": system_prompt}]
+else:
+    # Update the system prompt if it has changed
+    st.session_state.messages[0]["content"] = system_prompt
 
 # Display existing chat messages
 for message in st.session_state.messages[1:]:
@@ -45,8 +48,8 @@ if user_input:
     # Get assistant response
     with st.spinner("Thinking..."):
         try:
-            response = openai.Completion.create(
-                model="gpt-3.5-turbo",
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
                 messages=st.session_state.messages,
             )
             assistant_message = response["choices"][0]["message"]["content"]
@@ -68,7 +71,9 @@ if user_input:
 st.sidebar.markdown("---")
 st.sidebar.markdown("### Instructions:")
 st.sidebar.markdown(
-    "1. **Edit the System Prompt** to customize the bot's personality.\n"
-    "2. **Type your message** in the chat input box below.\n"
-    "3. **Reset Conversation** to start over."
+    """
+    1. **Edit the System Prompt** to customize the bot's personality.
+    2. **Type your message** in the chat input box below.
+    3. **Reset Conversation** to start over.
+    """
 )
