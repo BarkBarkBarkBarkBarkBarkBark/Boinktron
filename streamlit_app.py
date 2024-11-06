@@ -1,9 +1,9 @@
 import streamlit as st
-import openai
+import openai  # Import the openai module
 
-# Set the OpenAI API key from st.secrets
+# Set the OpenAI API key
 openai_api_key = st.secrets["OPENAI_API_KEY"]
-openai.api_key = openai_api_key
+openai.api_key = openai_api_key  # Set the API key
 
 st.title("BOINKBOT")
 
@@ -52,8 +52,8 @@ if user_input:
                 model="gpt-4",
                 messages=st.session_state.messages,
             )
-            assistant_message = response["choices"][0]["message"]["content"]
-        except openai.OpenAIError as e:
+            assistant_message = response.choices[0].message.content
+        except openai.error.OpenAIError as e:
             st.error(f"OpenAI API error: {e}")
             assistant_message = "I'm sorry, but I couldn't process that. Could you try again?"
         except Exception as e:
@@ -77,4 +77,3 @@ st.sidebar.markdown(
     3. **Reset Conversation** to start over.
     """
 )
-#AA
