@@ -1,8 +1,11 @@
 import streamlit as st
 import openai  # Correctly import the openai module
+from openai import OpenAI
 
 # Set the OpenAI API key
 openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+client = OpenAI()
 
 st.title("BOINKBOT")
 
@@ -47,7 +50,7 @@ if user_input:
     # Get assistant response
     with st.spinner("Thinking..."):
         try:
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model="gpt-4",
                 messages=st.session_state.messages,
             )
