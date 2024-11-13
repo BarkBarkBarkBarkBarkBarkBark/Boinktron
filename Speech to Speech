@@ -1,0 +1,68 @@
+# Install required packages:
+# pip install openai-whisper requests python-dotenv
+
+import openai
+import whisper
+import requests
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from a .env file
+load_dotenv()
+
+# Retrieve API keys from the environment variables
+openai.api_key = os.getenv("OPENAI_API_KEY")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+
+# Load Whisper model
+whisper_model = whisper.load_model("base")
+
+
+# Speech-to-Text with Whisper
+def speech_to_text():
+    print("Listening...")
+    # Replace "microphone audio stream here" with actual audio input stream
+    result = whisper_model.transcribe("microphone audio stream here")
+    print(f"You said: {result['text']}")
+    return result['text']
+
+
+# OpenAI Chat API
+def query_openai(prompt):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    reply = response['choices'][0]['message']['content']
+    print(f"GPT: {reply}")
+    return reply
+
+
+# Text-to-Speech with ElevenLabs
+def text_to_speech(text):
+    url = "https://api.elevenlabs.io/v1/text-to-speech"
+    headers = {"Authorization": f"Bearer {ELEVENLABS_API_KEY}"}
+    data = {"text": text, "voice_id": "preferred-voice-id"}
+
+    response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 200:
+        with open("response.mp3", "wb") as audio:
+            audio.write(response.content)
+        # Play the audio file
+        os.system("mpg123 response.mp3")
+    else:
+        print("Error with ElevenLabs API:", response.status_code, response.text)
+
+
+# Main loop
+def voice_to_voice():
+    while True:
+        user_input = speech_to_text()
+        if user_input:
+            response = query_openai(user_input)
+            text_to_speech(response)
+
+
+# Start the program
+if __name__ == "__main__":
+    voice_to_voice()
